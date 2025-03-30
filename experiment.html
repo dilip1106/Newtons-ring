@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title></title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="description" content="">
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no" />
+    <link rel='stylesheet' href='/template/assets/css/fonts.googleapis.css'>
+    <link rel="stylesheet" href="/template/bower_components/angular-material/angular-material.css" />
+    <link rel="stylesheet" href="/template/assets/css/app.css" />
+	<link rel="stylesheet" href="css/experiment.css"/>
+	
+    <script src="/template/js/createjs-2015.05.21.min.js"></script>
+    <script src="/template/js/easeljs-0.7.0.min.js"></script>
+    <script src="/template/bower_components/angular/angular.min.js"></script>
+    <script src="/template/bower_components/angular-animate/angular-animate.js"></script>
+    <script src="/template/bower_components/angular-aria/angular-aria.js"></script>
+    <script src="/template/bower_components/angular-fullscreen/angular-fullscreen.js"></script>
+    <script src="/template/js/Gettext.js"></script>
+    <script type="text/javascript" src="/template/bower_components/angular-material/angular-material.js"></script>
+    <script src="/template/js/getlanguage.js"></script>
+	<script src="/template/js/canvasjs.min.js"></script>
+    <script src="./src/user_controller.js"></script>
+	<script src="./src/view.js"></script>
+    <script src="./src/experiment.js"></script>
+	<script type="text/javascript">
+        angular
+            .module('starterApp', ['ngMaterial', 'users'])
+            .config(function($mdThemingProvider, $mdIconProvider) {
+                $mdIconProvider
+                    .icon("menu", "../template/assets/svg/menu.svg", 24)
+                    .icon("fullscreen", "../template/assets/icons/Icon3.svg", 24)
+                    .icon("help", "../template/assets/icons/Icon2.svg", 24);
+                $mdThemingProvider.theme('default')
+                    .primaryPalette('blue')
+                    .accentPalette('red');
+            });
+    </script>
+</head>
+
+<body style="background-color: #f2f2f2;" ng-app="starterApp" ng-controller="UserController as ul">
+	
+
+	<md-content flex layout="row" style="background-color: #f2f2f2; height: calc(100vh - 64px);">    
+    <!-- Left side controls -->
+    <md-content flex="35" layout="column" style="background-color: #f2f2f2; overflow-y: auto;">
+        <div class="controls-container">
+            <!-- Medium Selection -->
+            <md-content id="selectMedium" class="md-title selectable" layout-padding>{{medium_label}}</md-content>
+            <md-content class="md-padding" id="mediaName">
+                <md-select aria-label="mediaLbl" ng-model="medium_Mdl" ng-change="setMedium()">
+                    <md-option ng-repeat="x in medium_array" value="{{ x.type }}">{{ x.optionsMedium}}</md-option>
+                </md-select>
+            </md-content>
+
+            <!-- Light Source Selection -->
+            <md-content id="selectSource" class="md-title selectable" layout-padding>{{light_source_label}}</md-content>
+            <md-content class="md-padding">
+                <md-select aria-label="sourceLbl" ng-model="source_Mdl" ng-change="setSource()">
+                    <md-option class="md-title selectable" ng-repeat="x in source_array" value="{{ x.index }}">{{ x.Light }}</md-option>
+                </md-select>
+            </md-content>
+
+            <!-- Light On Button -->
+            <section layout="row" layout-align="center center">
+                <md-button ng-disabled="power_disable" class="md-raised" id="light_on" ng-click="lightOn();">{{light_on}}</md-button>
+            </section>
+
+            <!-- Radius Control -->
+            <md-content class="md-title selectable" layout-padding id="radiusLbl">{{lense_radius_label}} : {{radius_value}} {{radius_unit}}</md-content>
+            <div layout>  
+                <md-slider flex ng-model="radius_value" ng-disabled="disable_ctrls" step="5" min="50" max="100" aria-label="rating" ng-change="setRadius();"></md-slider>        
+            </div>
+
+            <!-- Microscope Position -->
+            <md-content class="md-title selectable" layout-padding id="positionLbl">{{micros_position_label}}</md-content>
+            <div layout>    
+                <md-slider flex ng-change="adjustMicroscopePosition();" ng-model="micros_position_value" step={{step_value}} min="-10" max="15" aria-label="rating"></md-slider> 
+            </div>
+
+            <!-- Focus Control -->
+            <md-content class="md-title selectable" layout-padding id="focusLbl">{{micros_focus_label}} : {{micros_focus_value}} {{radius_unit}}</md-content>
+            <div layout>  
+                <md-slider flex ng-model="micros_focus_value" step=".5" min="0" max="15" aria-label="rating" ng-change="setFocus()"></md-slider>        
+            </div>
+
+            <!-- Reset Button -->
+            <section layout="row" layout-align="center center">
+                <md-button class="md-raised" id="reset" ng-click="resetExp();">{{reset}}</md-button>
+            </section>
+
+            <!-- Show Results Checkbox -->
+            <md-checkbox ng-disabled="control_disable" class="md-title selectable" ng-model="resultValue" aria-label="Checkbox 1" id="showResult" ng-change="showResult();">{{show_result}}</md-checkbox>
+
+            <!-- Results Display -->
+            <md-content ng-hide="result_hide" id="result" class="md-title selectable" layout-padding>{{wavelength_label}} {{wavelength}} Å</md-content>
+        </div>
+    </md-content>
+
+    <!-- Right side canvas -->
+    <md-content flex="65" layout="column" style="background-color: #f2f2f2;">
+        <canvas id="demoCanvas" width="1000" height="700" align="center" layout-fill experiment></canvas>
+      
+    </md-content>
+</md-content>
+</body>
+<script src="/template/js/loading.js"></script>
+<script  async="async">
+    if(navigator.serviceWorker) {
+      navigator
+        .serviceWorker
+        .register('service_worker_Newtons_Rings_Wavelength_of_Light.js')
+        .then(function(r) {
+          console.log('NW  App now available offline');
+        })
+        .catch(function(e) {
+          console.log('NW App NOT available offline');
+          console.log(e);
+        });
+    } else {
+      console.log('Service workers are not supported');
+    }   
+</script>	
+</html>
