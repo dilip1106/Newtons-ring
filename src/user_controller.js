@@ -112,6 +112,10 @@
             /** Set Full screen to a specific element (bad practice) */
             /** Full screen.enable( document.getElementById('img') ) */
         };
+
+        // In your initialization code:
+        $scope.medium_Mdl = 'air';  // or whatever value represents air in your system
+        $scope.source_Mdl = 'sodium';  // or whatever value represents sodium in your system
  
         /** Click event function of the Reset button */
         $scope.resetExp = function() {
@@ -159,6 +163,129 @@
 			$scope.isActive1 = !$scope.isActive1;
 		};
 		
+        $scope.table1 = {
+            msr: new Array(10),
+            vsd: new Array(10),
+            vsrVsd: new Array(10),
+            tr: new Array(10)
+        };
+
+        $scope.calculateTable1Values = function(index) {
+            if ($scope.table1.msr[index] !== undefined && $scope.table1.vsd[index] !== undefined) {
+                // Calculate VSR-VSD X LC
+                $scope.table1.vsrVsd[index] = (( $scope.table1.vsd[index]) * 0.001).toFixed(3);
+                
+                // Calculate TR=MSR+ VSR
+                $scope.table1.tr[index] = ($scope.table1.msr[index] + parseFloat($scope.table1.vsrVsd[index])).toFixed(3);
+            }
+        };
+
+        $scope.table2 = {
+            readings: {},
+            diameter: {},
+            dSquared: {},
+            difference: {}
+        };
+
+        $scope.calculateValues = function(n) {
+            if ($scope.table2.diameter[n] !== undefined) {
+                // Calculate D²
+                $scope.table2.dSquared[n] = Math.pow(parseFloat($scope.table2.diameter[n]), 2).toFixed(3);
+                
+                // Set the reading value (half of diameter)
+                $scope.table2.readings[n] = (parseFloat($scope.table2.diameter[n]) / 2).toFixed(3);
+                
+                // Calculate (D²m+n-D²m) for current and next rows
+                let currentIndex = [10,8,6,4,2].indexOf(n);
+                if (currentIndex < 4) { // All rows except last
+                    let nextN = [10,8,6,4,2][currentIndex + 1];
+                    
+                    if ($scope.table2.dSquared[n] && $scope.table2.dSquared[nextN]) {
+                        // For row n, calculate D²n - D²n+2
+                        
+                            $scope.table2.difference[n] = (
+                                parseFloat($scope.table2.dSquared[n]) - 
+                                parseFloat($scope.table2.dSquared[nextN])
+                            ).toFixed(3);
+                        
+                        
+                    }
+                }
+                
+                // Update previous row's difference if this is a new entry
+                let prevIndex = [10,8,6,4,2].indexOf(n) - 1;
+                if (prevIndex >= 0) {
+                    let prevN = [10,8,6,4,2][prevIndex];
+                    if ($scope.table2.dSquared[prevN]) {
+                        $scope.table2.difference[prevN] = (
+                            parseFloat($scope.table2.dSquared[prevN]) - 
+                            parseFloat($scope.table2.dSquared[n])
+                        ).toFixed(3);
+                    }
+                }
+            }
+        };
+
+        $scope.downloadTables = function() {
+            const doc = new jspdf.jsPDF();
+            
+            // Title
+            doc.text("Newton's Rings - Observation Tables", 14, 15);
+            
+            // Table 1
+            doc.text("Table 1", 14, 25);
+            const headers1 = [['Sr. No', 'Fringe Number', 'MSR (cm)', 'VSD (cm)', 'VSR-VSD X LC (cm)', 'TR=MSR+ VSR (cm)']];
+            const data1 = [];
+            
+            for(let i = 1; i <= 10; i++) {
+                data1.push([
+                    i,
+                    i <= 5 ? 'L' + i : 'R' + (i-5),
+                    $scope.table1.msr[i-1] || '',
+                    $scope.table1.vsd[i-1] || '',
+                    $scope.table1.vsrVsd[i-1] || '',
+                    $scope.table1.tr[i-1] || ''
+                ]);
+            }
+            
+            doc.autoTable({
+                head: headers1,
+                body: data1,
+                startY: 30,
+                theme: 'grid',
+                margin: { top: 30 },
+                tableWidth: 'auto'
+            });
+            
+            // Table 2
+            doc.text("Table 2", 14, doc.previousAutoTable.finalY + 15);
+            const headers2 = [['Order of ring', 'Left', 'Right', 'Diameter D(cm)', 'D²(cm²)', '(D²m+n-D²m)']];
+            const data2 = [];
+            
+            [10,8,6,4,2].forEach(n => {
+                data2.push([
+                    n,
+                    'L' + n,
+                    'R' + n,
+                    $scope.table2.diameter[n] || '',
+                    $scope.table2.dSquared[n] || '',
+                    $scope.table2.difference[n] || ''
+                ]);
+            });
+            
+            doc.autoTable({
+                head: headers2,
+                body: data2,
+                startY: doc.previousAutoTable.finalY + 20,
+                theme: 'grid',
+                margin: { top: 30 },
+                tableWidth: 'auto'
+            });
+            
+            // Save the PDF
+            doc.save('newton_rings_tables.pdf');
+        };
+
         /**
         * First hide the bottom sheet IF visible, then
         * hide or Show the 'left' sideNav area

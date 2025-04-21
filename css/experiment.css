@@ -11,12 +11,18 @@
     max-height: 100%;
 }
 
+.controls-container md-content:first-child {
+    margin-bottom: 10px;
+    border-bottom: 2px solid #2196F3;
+}
+
 md-slider {
-    margin: 10px 0;
+    height: 48px;
+    margin: 8px 0;
 }
 
 md-slider .md-track {
-    background-color: rgba(33, 150, 243, 0.3);
+    background-color: rgba(33, 150, 243, 0.2);
 }
 
 md-slider .md-track-fill {
@@ -24,6 +30,8 @@ md-slider .md-track-fill {
 }
 
 md-slider .md-thumb:after {
+    width: 20px;
+    height: 25px;
     border-color: #2196F3;
     background-color: #2196F3;
 }
@@ -32,7 +40,6 @@ md-slider.md-default-theme.md-min .md-thumb:after,
 md-slider.md-min .md-thumb:after {
     background-color: #2196F3;
 }
-
 
 md-slider .md-track.md-track-container {
     background-color: #ecf0f3;
@@ -52,10 +59,12 @@ md-content {
 }
 
 #demoCanvas {
-    max-width: 500px;
-    max-height: 500px;
-    margin: 20px auto;
+    width: 100%;
+    max-width: 700px;
+    height: auto;
+    margin: 0 auto;
     display: block;
+    touch-action: none;
 }
 
 md-select-menu md-content {
@@ -74,4 +83,522 @@ md-select {
 
 md-content.md-padding {
     background-color: transparent;
+}
+
+/* Header Styles */
+.experiment-header {
+    background-color: #2196F3 !important;
+    color: white;
+    text-align: center;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.experiment-header h1 {
+    margin: 0;
+    padding: 15px;
+    font-size: 24px;
+}
+
+/* Canvas Styles */
+.canvas-container {
+    background-color: white;
+    border-radius: 8px;
+    margin: 10px;
+    padding: 10px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
+/* Controls Styles */
+.controls-section {
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+.controls-container {
+    background-color: white;
+    border-radius: 8px;
+    margin: 10px;
+    padding: 15px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+/* Info Display Styles */
+.info-display {
+    background-color: #f5f5f5;
+    border-radius: 4px;
+    margin: 8px 0;
+    padding: 12px !important;
+    font-size: 16px !important;
+    color: rgba(0,0,0,0.87);
+    border-left: 4px solid #2196F3;
+}
+
+/* Table Styles */
+.table-container {
+    margin: 20px 0;
+    overflow-x: auto;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.table-title {
+    padding: 15px;
+    margin: 0;
+    text-align: center;
+    color: #2196F3;
+    font-size: 18px;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.observation-table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 600px;
+}
+
+.observation-table th,
+.observation-table td {
+    padding: 12px;
+    text-align: center;
+    border: 1px solid #e0e0e0;
+}
+
+.observation-table th {
+    background-color: #f5f5f5;
+    font-weight: 600;
+}
+
+.observation-table tr:nth-child(even) {
+    background-color: #fafafa;
+}
+
+.observation-table td {
+    min-width: 80px;
+    position: relative;
+}
+
+/* Table Input Styles */
+.table-input {
+    margin: 0;
+    padding: 0;
+    min-height: 26px;
+}
+
+.table-input input {
+    text-align: center;
+    height: 26px;
+    width: 80px;
+    padding: 0 4px;
+    margin: 0;
+    border: 1px solid #e0e0e0;
+    border-radius: 4px;
+}
+
+.table-input input:focus {
+    outline: none;
+    border-color: #2196F3;
+    box-shadow: 0 0 0 2px rgba(33, 150, 243, 0.2);
+}
+
+.table-input input::-webkit-outer-spin-button,
+.table-input input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.table-input input[type=number] {
+    -moz-appearance: textfield;
+}
+
+.table-input .md-errors-spacer {
+    display: none;
+}
+
+/* Mobile Specific Styles */
+@media screen and (max-width: 959px) {
+    md-select,
+    md-slider,
+    .md-button {
+        height: 48px;
+        margin: 8px 0;
+        touch-action: manipulation;
+    }
+
+    md-slider {
+        height: 56px;
+    }
+    
+    md-slider .md-thumb:after {
+        width: 24px;
+        height: 24px;
+    }
+
+    md-checkbox {
+        min-height: 48px;
+        padding: 8px 0;
+    }
+
+    md-slider .md-thumb {
+        transform: scale(1.2);
+    }
+
+    md-slider .md-track-container {
+        height: 4px;
+    }
+
+    .md-button {
+        min-width: 120px;
+        line-height: 48px;
+    }
+
+    md-select {
+        padding: 12px;
+    }
+
+    .controls-container {
+        margin: 5px;
+        padding: 10px;
+    }
+
+    .canvas-container {
+        margin: 5px;
+        padding: 10px;
+        order: 1;
+    }
+
+    .controls-section {
+        order: 2;
+    }
+
+    #demoCanvas {
+        max-width: 400px;
+        max-height: 400px;
+        margin: 0 auto;
+    }
+
+    .experiment-header h1 {
+        font-size: 20px;
+        padding: 10px;
+    }
+
+    .canvas-container {
+        margin: 10px;
+        padding: 10px;
+    }
+
+    #demoCanvas {
+        width: 100% !important;
+        height: auto !important;
+        max-width: 400px;
+        max-height: 400px;
+        touch-action: none;
+    }
+
+    .controls-section {
+        margin: 0 10px;
+    }
+
+    .controls-container {
+        padding: 15px;
+        margin: 0;
+        border-radius: 8px;
+    }
+
+    /* Larger touch targets for mobile */
+    md-select {
+        height: 48px;
+        line-height: 48px;
+        font-size: 16px;
+        padding: 0 12px;
+    }
+
+    md-slider {
+        height: 48px;
+        margin: 8px 0;
+    }
+
+    md-slider .md-thumb:after {
+        width: 24px;
+        height: 24px;
+    }
+
+    .md-button {
+        min-height: 48px;
+        line-height: 48px;
+        font-size: 16px;
+        margin: 8px 0;
+        width: 100%;
+        max-width: 200px;
+    }
+
+    md-checkbox {
+        min-height: 48px;
+        padding: 8px 0;
+    }
+
+    /* Better text readability */
+    .md-title {
+        font-size: 16px !important;
+        line-height: 1.4;
+        margin: 8px 0;
+    }
+
+    div[layout-padding] {
+        padding: 8px;
+    }
+
+    /* Improve spacing */
+    md-content[layout-padding] {
+        padding: 8px !important;
+    }
+
+    .md-padding {
+        padding: 8px !important;
+    }
+
+    /* Add scroll with momentum */
+    .controls-section {
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    /* Better visual separation */
+    section {
+        margin: 16px 0;
+        display: flex;
+        justify-content: center;
+    }
+
+    /* Improved focus states */
+    md-select:focus,
+    md-slider:focus,
+    .md-button:focus {
+        outline: 2px solid #2196F3;
+        outline-offset: 2px;
+    }
+
+    .info-display {
+        margin: 6px 0;
+        padding: 10px !important;
+        font-size: 14px !important;
+    }
+
+    .table-container {
+        margin: 10px 0;
+        border-radius: 4px;
+    }
+
+    .table-title {
+        padding: 10px;
+        font-size: 16px;
+    }
+
+    .observation-table {
+        font-size: 14px;
+    }
+
+    .observation-table th,
+    .observation-table td {
+        padding: 8px;
+    }
+
+    .canvas-container {
+        order: 1;
+    }
+
+    .controls-section {
+        order: 2;
+    }
+
+    .tables-section {
+        order: 3;
+    }
+
+    .table-container {
+        margin: 10px;
+        overflow-x: auto;
+    }
+
+    #demoCanvas {
+        max-width: 400px;
+        max-height: 400px;
+        margin: 0 auto;
+    }
+
+    .observation-table {
+        font-size: 14px;
+    }
+
+    .table-input input {
+        width: 60px;
+        font-size: 14px;
+    }
+}
+
+/* Tablet and Desktop Styles */
+@media screen and (min-width: 960px) {
+    .canvas-container {
+        margin: 5px;
+        padding: 10px;
+        order: 2;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .controls-container {
+        max-width: 320px;
+        margin: 5px;
+        padding: 10px;
+        position: sticky;
+        top: 10px;
+        max-height: calc(100vh - 40px);
+        overflow-y: auto;
+        overflow-x: hidden;
+    }
+
+    .controls-section {
+        order: 1;
+        margin-right: 20px;
+    }
+
+    #demoCanvas {
+        width: 550px !important;
+        height: 550px !important;
+    }
+
+    md-select, 
+    md-slider {
+        width: calc(100% - 10px);
+        margin: 5px;
+    }
+
+    .md-button {
+        max-width: 100%;
+        margin: 5px;
+    }
+
+    .md-title {
+        font-size: 16px !important;
+        padding: 8px !important;
+    }
+
+    md-content[layout-padding] {
+        padding: 8px !important;
+    }
+
+    .md-padding {
+        padding: 4px !important;
+    }
+
+    md-select {
+        margin: 2px 0;
+    }
+
+    md-slider {
+        margin: 8px 0;
+    }
+
+    .tables-section {
+        order: 1;
+        margin: 10px;
+    }
+
+    .controls-section {
+        order: 2;
+        margin: 10px;
+    }
+
+    .canvas-container {
+        order: 3;
+        margin: 10px;
+    }
+
+    .table-container {
+        margin-bottom: 20px;
+    }
+
+    #demoCanvas {
+        width: 600px !important;
+        height: 600px !important;
+    }
+}
+
+/* Touch Interaction Improvements */
+md-slider .md-track-container {
+    cursor: pointer;
+    touch-action: none;
+}
+
+md-select-menu {
+    max-height: 280px;
+}
+
+.md-select-menu-container {
+    touch-action: none;
+}
+
+/* Animation for Interactions */
+.md-button,
+md-checkbox,
+md-select,
+md-slider .md-thumb:after {
+    transition: all 0.2s ease;
+}
+
+.md-button:active {
+    transform: scale(0.95);
+}
+
+/* Common styles */
+body {
+    overflow-x: hidden;
+}
+
+.controls-section {
+    min-width: 0; /* Prevents flex items from overflowing */
+}
+
+md-content {
+    overflow-x: hidden;
+}
+
+/* Additional helper classes */
+.mobile-first {
+    order: -1;
+}
+
+.touch-scroll {
+    -webkit-overflow-scrolling: touch;
+    overflow-y: auto;
+}
+
+/* Common Styles */
+.tables-section {
+    max-height: calc(100vh - 80px);
+    overflow-y: auto;
+}
+
+.observation-table {
+    min-width: 100%;
+    border-collapse: collapse;
+}
+
+.observation-table th,
+.observation-table td {
+    padding: 8px;
+    border: 1px solid #e0e0e0;
+    text-align: center;
+}
+
+.observation-table th {
+    background-color: #f5f5f5;
+    font-weight: 500;
 }

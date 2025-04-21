@@ -1,16 +1,25 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title></title>
+    <title>Newton's Rings</title>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="description" content="">
     <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no" />
+
     <link rel='stylesheet' href='/template/assets/css/fonts.googleapis.css'>
     <link rel="stylesheet" href="/template/bower_components/angular-material/angular-material.css" />
     <link rel="stylesheet" href="/template/assets/css/app.css" />
-	<link rel="stylesheet" href="css/experiment.css"/>
-	
+    <link rel="stylesheet" href="css/experiment.css"/>
+
+    <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+    </style>
+
     <script src="/template/js/createjs-2015.05.21.min.js"></script>
     <script src="/template/js/easeljs-0.7.0.min.js"></script>
     <script src="/template/bower_components/angular/angular.min.js"></script>
@@ -20,11 +29,14 @@
     <script src="/template/js/Gettext.js"></script>
     <script type="text/javascript" src="/template/bower_components/angular-material/angular-material.js"></script>
     <script src="/template/js/getlanguage.js"></script>
-	<script src="/template/js/canvasjs.min.js"></script>
+    <script src="/template/js/canvasjs.min.js"></script>
     <script src="./src/user_controller.js"></script>
-	<script src="./src/view.js"></script>
+    <script src="./src/view.js"></script>
     <script src="./src/experiment.js"></script>
-	<script type="text/javascript">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
+
+    <script type="text/javascript">
         angular
             .module('starterApp', ['ngMaterial', 'users'])
             .config(function($mdThemingProvider, $mdIconProvider) {
@@ -39,87 +51,172 @@
     </script>
 </head>
 
-<body style="background-color: #f2f2f2;" ng-app="starterApp" ng-controller="UserController as ul">
-	
-
-	<md-content flex layout="row" style="background-color: #f2f2f2; height: calc(100vh - 64px);">    
-    <!-- Left side controls -->
-    <md-content flex="35" layout="column" style="background-color: #f2f2f2; overflow-y: auto;">
-        <div class="controls-container">
-            <!-- Medium Selection -->
-            <md-content id="selectMedium" class="md-title selectable" layout-padding>{{medium_label}}</md-content>
-            <md-content class="md-padding" id="mediaName">
-                <md-select aria-label="mediaLbl" ng-model="medium_Mdl" ng-change="setMedium()">
-                    <md-option ng-repeat="x in medium_array" value="{{ x.type }}">{{ x.optionsMedium}}</md-option>
-                </md-select>
-            </md-content>
-
-            <!-- Light Source Selection -->
-            <md-content id="selectSource" class="md-title selectable" layout-padding>{{light_source_label}}</md-content>
-            <md-content class="md-padding">
-                <md-select aria-label="sourceLbl" ng-model="source_Mdl" ng-change="setSource()">
-                    <md-option class="md-title selectable" ng-repeat="x in source_array" value="{{ x.index }}">{{ x.Light }}</md-option>
-                </md-select>
-            </md-content>
-
-            <!-- Light On Button -->
-            <section layout="row" layout-align="center center">
-                <md-button ng-disabled="power_disable" class="md-raised" id="light_on" ng-click="lightOn();">{{light_on}}</md-button>
-            </section>
-
-            <!-- Radius Control -->
-            <md-content class="md-title selectable" layout-padding id="radiusLbl">{{lense_radius_label}} : {{radius_value}} {{radius_unit}}</md-content>
-            <div layout>  
-                <md-slider flex ng-model="radius_value" ng-disabled="disable_ctrls" step="5" min="50" max="100" aria-label="rating" ng-change="setRadius();"></md-slider>        
-            </div>
-
-            <!-- Microscope Position -->
-            <md-content class="md-title selectable" layout-padding id="positionLbl">{{micros_position_label}}</md-content>
-            <div layout>    
-                <md-slider flex ng-change="adjustMicroscopePosition();" ng-model="micros_position_value" step={{step_value}} min="-10" max="15" aria-label="rating"></md-slider> 
-            </div>
-
-            <!-- Focus Control -->
-            <md-content class="md-title selectable" layout-padding id="focusLbl">{{micros_focus_label}} : {{micros_focus_value}} {{radius_unit}}</md-content>
-            <div layout>  
-                <md-slider flex ng-model="micros_focus_value" step=".5" min="0" max="15" aria-label="rating" ng-change="setFocus()"></md-slider>        
-            </div>
-
-            <!-- Reset Button -->
-            <section layout="row" layout-align="center center">
-                <md-button class="md-raised" id="reset" ng-click="resetExp();">{{reset}}</md-button>
-            </section>
-
-            <!-- Show Results Checkbox -->
-            <md-checkbox ng-disabled="control_disable" class="md-title selectable" ng-model="resultValue" aria-label="Checkbox 1" id="showResult" ng-change="showResult();">{{show_result}}</md-checkbox>
-
-            <!-- Results Display -->
-            <md-content ng-hide="result_hide" id="result" class="md-title selectable" layout-padding>{{wavelength_label}} {{wavelength}} Å</md-content>
-        </div>
+<body ng-app="starterApp" ng-controller="UserController as ul">
+    <!-- Main Title -->
+    <md-content class="experiment-header" layout-padding>
+        <h1>Newton's Rings</h1>
     </md-content>
 
-    <!-- Right side canvas -->
-    <md-content flex="65" layout="column" style="background-color: #f2f2f2;">
-        <canvas id="demoCanvas" width="1000" height="700" align="center" layout-fill experiment></canvas>
-      
+    <!-- Responsive layout container -->
+    <md-content layout="column" layout-gt-sm="row" layout-align="center start" style="background-color: #f2f2f2;">
+        <!-- Tables Section - Left -->
+        <md-content flex-gt-sm="25" flex="100" layout="column" class="tables-section">
+            <!-- Table 1 -->
+            <md-content class="table-container">
+                <h3 class="table-title">Observation Table 1</h3>
+                <table class="observation-table">
+                    <thead>
+                        <tr>
+                            <th>Sr. No</th>
+                            <th>Fringe Number</th>
+                            <th>MSR (cm)</th>
+                            <th>VSD (cm)</th>
+                            <th>VSR-VSD X LC (cm)</th>
+                            <th>TR=MSR+ VSR (cm)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr ng-repeat="i in [1,2,3,4,5,6,7,8,9,10]">
+                            <td>{{i}}</td>
+                            <td>{{i <= 5 ? 'L' + i : 'R' + (i-5)}}</td>
+                            <td>
+                                <md-input-container class="table-input">
+                                    <input type="number" ng-model="table1.msr[i-1]" ng-change="calculateTable1Values(i-1)" step="0.01">
+                                </md-input-container>
+                            </td>
+                            <td>
+                                <md-input-container class="table-input">
+                                    <input type="number" ng-model="table1.vsd[i-1]" ng-change="calculateTable1Values(i-1)" step="0.01">
+                                </md-input-container>
+                            </td>
+                            <td>{{table1.vsrVsd[i-1] || ''}}</td>
+                            <td>{{table1.tr[i-1] || ''}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </md-content>
+
+            <!-- Table 2 -->
+            <md-content class="table-container">
+                <h3 class="table-title">Observation Table 2</h3>
+                <table class="observation-table">
+                    <thead>
+                        <tr>
+                            <th>Order of ring</th>
+                            <th colspan="2">Microscopic Reading (cm)</th>
+                            <th>Diameter D(cm)</th>
+                            <th>D²(cm²)</th>
+                            <th>(D²m+n-D²m)</th>
+                        </tr>
+                        <tr>
+                            <th></th>
+                            <th>Left</th>
+                            <th>Right</th>
+                            <th></th>
+                            <th></th>
+                            <th>Cm²</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr ng-repeat="n in [10,8,6,4,2]">
+                            <td>{{n}}</td>
+                            <td>{{'L' + n}}</td>
+                            <td>{{'R' + n}}</td>
+                            <td>
+                                <md-input-container class="table-input">
+                                    <input type="number" ng-model="table2.diameter[n]" ng-change="calculateValues(n)" step="0.01">
+                                </md-input-container>
+                            </td>
+                            <td>{{table2.dSquared[n] || ''}}</td>
+                            <td>{{table2.difference[n] || ''}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+            </md-content>
+
+            <!-- Add Download All Tables Button -->
+            <div style="text-align: center;">
+                <md-button class="md-raised md-primary" ng-click="downloadTables()" style="margin: 16px;">
+                    Download All Tables
+                </md-button>
+            </div>
+        </md-content>
+
+        <!-- Controls Section - Middle -->
+        <md-content flex-gt-sm="25" flex="100" layout="column" class="controls-section">
+            <div class="controls-container">
+                <!-- Title -->
+                <md-content class="md-title selectable" layout-padding style="text-align: center; font-size: 24px; font-weight: bold; color: #2196F3;">
+                    Newton's Rings
+                </md-content>
+
+                <!-- Fixed Medium Display -->
+                <md-content class="md-title selectable info-display" layout-padding>
+                    Medium: Air
+                </md-content>
+
+                <!-- Fixed Light Source Display -->
+                <md-content class="md-title selectable info-display" layout-padding>
+                    Light Source: Sodium
+                </md-content>
+
+                <!-- Light On/Off Button -->
+                <section layout="row" layout-align="center center">
+                    <md-button ng-disabled="power_disable" class="md-raised" id="light_on" ng-click="lightOn();">{{light_on}}</md-button>
+                </section>
+
+                <!-- Radius Control -->
+                <md-content class="md-title selectable" layout-padding layout-align="center center" id="radiusLbl">
+                    {{lense_radius_label}} : {{radius_value}} {{radius_unit}}
+                </md-content>
+                <div layout layout-padding>  
+                    <md-slider flex ng-model="radius_value" ng-disabled="disable_ctrls" step="5" min="50" max="100" 
+                              aria-label="rating" ng-change="setRadius();"></md-slider>        
+                </div>
+
+                <!-- Microscope Position -->
+                <md-content class="md-title selectable" layout-padding layout-align="center center" id="positionLbl">
+                    {{micros_position_label}}
+                </md-content>
+                <div layout layout-padding>    
+                    <md-slider flex ng-change="adjustMicroscopePosition();" ng-model="micros_position_value" 
+                              step={{step_value}} min="-10" max="15" aria-label="rating"></md-slider> 
+                </div>
+
+                <!-- Focus Control -->
+                <md-content class="md-title selectable" layout-padding layout-align="center center" id="focusLbl">
+                    {{micros_focus_label}} : {{micros_focus_value}} {{radius_unit}}
+                </md-content>
+                <div layout layout-padding>  
+                    <md-slider flex ng-model="micros_focus_value" step=".5" min="0" max="15" 
+                              aria-label="rating" ng-change="setFocus()"></md-slider>        
+                </div>
+            </div>
+        </md-content>
+
+        <!-- Canvas Section - Right -->
+        <md-content flex-gt-sm="45" flex="100" layout="column" class="canvas-container">
+            <canvas id="demoCanvas" width="700" height="700" layout-fill experiment></canvas>
+        </md-content>
     </md-content>
-</md-content>
+
+    <script src="/template/js/loading.js"></script>
+    <script async="async">
+        if(navigator.serviceWorker) {
+            navigator
+                .serviceWorker
+                .register('service_worker_Newtons_Rings_Wavelength_of_Light.js')
+                .then(function(r) {
+                    console.log('NW App now available offline');
+                })
+                .catch(function(e) {
+                    console.log('NW App NOT available offline');
+                    console.log(e);
+                });
+        } else {
+            console.log('Service workers are not supported');
+        }   
+    </script>    
 </body>
-<script src="/template/js/loading.js"></script>
-<script  async="async">
-    if(navigator.serviceWorker) {
-      navigator
-        .serviceWorker
-        .register('service_worker_Newtons_Rings_Wavelength_of_Light.js')
-        .then(function(r) {
-          console.log('NW  App now available offline');
-        })
-        .catch(function(e) {
-          console.log('NW App NOT available offline');
-          console.log(e);
-        });
-    } else {
-      console.log('Service workers are not supported');
-    }   
-</script>	
 </html>
