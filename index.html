@@ -61,44 +61,9 @@
     <md-content layout="column" layout-gt-sm="row" layout-align="center start" style="background-color: #f2f2f2;">
         <!-- Tables Section - Left -->
         <md-content flex-gt-sm="25" flex="100" layout="column" class="tables-section">
-            <!-- Table 1 -->
+            <!-- Only Table 2 -->
             <md-content class="table-container">
-                <h3 class="table-title">Observation Table 1</h3>
-                <table class="observation-table">
-                    <thead>
-                        <tr>
-                            <th>Sr. No</th>
-                            <th>Fringe Number</th>
-                            <th>MSR (cm)</th>
-                            <th>VSD (cm)</th>
-                            <th>VSR-VSD X LC (cm)</th>
-                            <th>TR=MSR+ VSR (cm)</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr ng-repeat="i in [1,2,3,4,5,6,7,8,9,10]">
-                            <td>{{i}}</td>
-                            <td>{{i <= 5 ? 'L' + i : 'R' + (i-5)}}</td>
-                            <td>
-                                <md-input-container class="table-input">
-                                    <input type="number" ng-model="table1.msr[i-1]" ng-change="calculateTable1Values(i-1)" step="0.01">
-                                </md-input-container>
-                            </td>
-                            <td>
-                                <md-input-container class="table-input">
-                                    <input type="number" ng-model="table1.vsd[i-1]" ng-change="calculateTable1Values(i-1)" step="0.01">
-                                </md-input-container>
-                            </td>
-                            <td>{{table1.vsrVsd[i-1] || ''}}</td>
-                            <td>{{table1.tr[i-1] || ''}}</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </md-content>
-
-            <!-- Table 2 -->
-            <md-content class="table-container">
-                <h3 class="table-title">Observation Table 2</h3>
+                <h3 class="table-title">Observation Table</h3>
                 <table class="observation-table">
                     <thead>
                         <tr>
@@ -132,13 +97,12 @@
                         </tr>
                     </tbody>
                 </table>
-                
             </md-content>
 
-            <!-- Add Download All Tables Button -->
+            <!-- Download Button -->
             <div style="text-align: center;">
                 <md-button class="md-raised md-primary" ng-click="downloadTables()" style="margin: 16px;">
-                    Download All Tables
+                    Download Table
                 </md-button>
             </div>
         </md-content>
@@ -168,11 +132,11 @@
 
                 <!-- Radius Control -->
                 <md-content class="md-title selectable" layout-padding layout-align="center center" id="radiusLbl">
-                    {{lense_radius_label}} : {{radius_value}} {{radius_unit}}
+                    {{lense_radius_label}}
                 </md-content>
-                <div layout layout-padding>  
-                    <md-slider flex ng-model="radius_value" ng-disabled="disable_ctrls" step="5" min="50" max="100" 
-                              aria-label="rating" ng-change="setRadius();"></md-slider>        
+                <div layout="row" layout-align="center center" layout-padding>
+                    <md-button class="md-raised" ng-click="radius_value = 50; setRadius();">A</md-button>
+                    <md-button class="md-raised" ng-click="radius_value = 100; setRadius();">B</md-button>
                 </div>
 
                 <!-- Microscope Position -->
